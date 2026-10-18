@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#030407">
+<title>A little surprise for Billy</title>
+<style>
+:root{--gold:#ffd783;--cyan:#7be7ff;--violet:#bd9bff;--bg:#030407}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--bg);color:#fff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+body{cursor:pointer;user-select:none}
+#intro{position:fixed;inset:0;display:grid;place-items:center;background:#030407;z-index:10;transition:opacity 1.2s ease,visibility 1.2s}
+.intro-inner{text-align:center;padding:24px;animation:breathe 3s ease-in-out infinite}
+.eyebrow{font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.34em;color:#8e96a9;text-transform:uppercase}
+.cursor{display:inline-block;width:8px;height:16px;background:var(--gold);vertical-align:middle;margin-left:6px;animation:blink 1s steps(2) infinite}
+.tap{margin-top:22px;color:#aeb5c7;font-size:clamp(12px,1.5vw,15px);letter-spacing:.12em;text-transform:uppercase;animation:fade 2s ease-in-out infinite}
+#intro.gone{opacity:0;visibility:hidden;pointer-events:none}
+#scene{position:fixed;inset:0;opacity:0;transition:opacity 1.2s ease;overflow:hidden;isolation:isolate}
+#scene.show{opacity:1}
+#stars,#fireworks,#confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.aurora{position:absolute;width:75vw;height:75vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(100px);opacity:.18;z-index:-1;animation:aurora 12s ease-in-out infinite alternate}
+.a1{background:#155b89;left:-20%;top:-35%}.a2{background:#682b87;right:-25%;bottom:-45%;animation-delay:-4s}
+.content{position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:clamp(24px,6vw,90px);padding:5vh 7vw}
+.copy{max-width:650px;opacity:0;transform:translateY(25px);animation:rise 1s .35s forwards}
+.kicker{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.26em;color:var(--cyan);text-transform:uppercase;margin-bottom:18px}
+h1{font-size:clamp(42px,7.2vw,104px);line-height:.92;letter-spacing:-.065em;margin:0;font-weight:900}
+h1 span{display:block;background:linear-gradient(110deg,#fff 5%,var(--gold) 42%,#ff8aab 75%,var(--cyan));background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite}
+.subtitle{font-size:clamp(16px,2vw,23px);line-height:1.6;color:#c6ccda;margin:26px 0 20px;max-width:520px}
+.code-line{font:clamp(11px,1.2vw,14px) ui-monospace,SFMono-Regular,Consolas,monospace;color:#8b96ad;line-height:1.8}
+.code-line b{color:#9fe9bd;font-weight:500}
+.photo-wrap{position:relative;width:clamp(220px,27vw,365px);flex:0 0 auto;aspect-ratio:3/4;opacity:0;transform:translateY(35px) scale(.94);animation:portraitIn 1.2s .65s cubic-bezier(.2,.8,.2,1) forwards}
+.photo-glow{position:absolute;inset:8% -8%;background:linear-gradient(145deg,#7be7ff,#bd9bff,#ffd783);filter:blur(55px);opacity:.32;border-radius:50%;animation:glow 4s ease-in-out infinite alternate}
+.photo-frame{position:absolute;inset:0;padding:2px;border-radius:180px 180px 24px 24px;background:linear-gradient(145deg,#fff8df,#7be7ff 35%,#8c6acb 68%,#ffd783);box-shadow:0 25px 100px #0009}
+.photo-frame:after{content:"";position:absolute;inset:7px;border:1px solid #ffffff55;border-radius:174px 174px 19px 19px;pointer-events:none}
+.photo-frame img{width:100%;height:100%;object-fit:cover;object-position:center 25%;border-radius:178px 178px 22px 22px;display:block;filter:saturate(.92) contrast(1.02)}
+.photo-label{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#0a0c13dd;border:1px solid #ffffff24;padding:10px 18px;border-radius:999px;font:11px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.16em;color:var(--gold);backdrop-filter:blur(10px)}
+.signature{margin-top:25px;font-size:13px;color:#9ca5b9}
+.signature strong{color:#fff;font-weight:600}
+.corner{position:absolute;z-index:3;font:10px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.18em;color:#717b90}
+.top-left{top:24px;left:28px}.top-right{top:24px;right:28px}.bottom-left{bottom:24px;left:28px}.bottom-right{bottom:24px;right:28px}
+#replay{position:absolute;z-index:5;right:24px;bottom:52px;border:1px solid #ffffff35;background:#090b12aa;color:#cdd3e2;border-radius:999px;padding:10px 15px;font-size:11px;letter-spacing:.12em;cursor:pointer;backdrop-filter:blur(10px)}
+#replay:hover{border-color:var(--gold);color:var(--gold)}
+#secret{position:absolute;z-index:4;left:50%;bottom:24px;transform:translateX(-50%);font:10px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.12em;color:#697387;white-space:nowrap}
+@keyframes blink{50%{opacity:0}}@keyframes breathe{50%{opacity:.55}}@keyframes fade{50%{opacity:.45}}
+@keyframes rise{to{opacity:1;transform:translateY(0)}}@keyframes portraitIn{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes shine{to{background-position:220% center}}@keyframes aurora{to{transform:translate(12%,8%) scale(1.15)}}
+@keyframes glow{to{opacity:.55;transform:scale(1.05)}}@media(max-width:700px){.content{flex-direction:column-reverse;gap:26px;padding:5vh 7vw;justify-content:center}.photo-wrap{width:clamp(145px,32vh,240px);height:auto}.copy{text-align:center}.kicker{margin-bottom:12px}h1{font-size:clamp(40px,10vw,66px)}.subtitle{margin:16px auto 12px;font-size:15px}.code-line{font-size:10px}.signature{margin-top:12px}.corner{font-size:8px}.top-left{left:12px;top:12px}.top-right{right:12px;top:12px}.bottom-left{left:12px;bottom:12px}.bottom-right{right:12px;bottom:12px}#secret{display:none}#replay{right:12px;bottom:38px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="intro" aria-label="Birthday surprise waiting">
+  <div class="intro-inner">
+    <div class="eyebrow">system idle <span class="cursor"></span></div>
+    <div class="tap">Click anywhere to initialize</div>
+  </div>
+</div>
+<main id="scene" aria-label="Happy birthday Billy">
+  <canvas id="stars"></canvas><canvas id="fireworks"></canvas><canvas id="confetti"></canvas>
+  <div class="aurora a1"></div><div class="aurora a2"></div>
+  <div class="corner top-left">BILLY.exe <span style="color:#9fe9bd">● ONLINE</span></div>
+  <div class="corner top-right">BUILD: BIRTHDAY.2026</div>
+  <div class="content">
+    <section class="copy">
+      <div class="kicker">A very important system message</div>
+      <h1>HAPPY<br><span>BIRTHDAY,</span><span>BILLY!</span></h1>
+      <p class="subtitle">Another year. Another level unlocked. May your bugs be few, your coffee be strong, and your best days still be ahead.</p>
+      <div class="code-line"><span style="color:#bd9bff">const</span> birthday = { <b>happiness: Infinity,</b><br>&nbsp;&nbsp;newLevel: <b>true</b>, surprises: <b>"loading..."</b> };</div>
+      <div class="signature">Made with <span style="color:#ff8aa9">♥</span> and a little bit of code.</div>
+    </section>
+    <div class="photo-wrap">
+      <div class="photo-glow"></div>
+      <div class="photo-frame"><img src="billy.jpg" alt="Billy in his graduation attire"></div>
+      <div class="photo-label">PLAYER ONE · LEVEL UP</div>
+    </div>
+  </div>
+  <div class="corner bottom-left">ERROR 404: BORING BIRTHDAY NOT FOUND</div>
+  <div class="corner bottom-right">MADE FOR BILLY · 19 OCT</div>
+  <div id="secret">P.S. You're appreciated more than this code can say.</div>
+  <button id="replay" type="button">REPLAY FIREWORKS ↗</button>
+</main>
+<script>
+(() => {
+  const intro = document.getElementById('intro');
+  const scene = document.getElementById('scene');
+  const fireCanvas = document.getElementById('fireworks');
+  const starCanvas = document.getElementById('stars');
+  const confettiCanvas = document.getElementById('confetti');
+  const fireCtx = fireCanvas.getContext('2d');
+  const starCtx = starCanvas.getContext('2d');
+  const confettiCtx = confettiCanvas.getContext('2d');
+  let started = false, width = 0, height = 0, dpr = 1;
+  let rockets = [], particles = [], confetti = [], stars = [], lastLaunch = 0;
+  const colors = ['#ffd783','#7be7ff','#bd9bff','#ff8aa9','#ffffff','#9fe9bd'];
+  const resize = () => {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth; height = window.innerHeight;
+    [fireCanvas,starCanvas,confettiCanvas].forEach(c => {
+      c.width = Math.round(width*dpr); c.height = Math.round(height*dpr);
+      c.style.width = width+'px'; c.style.height = height+'px';
+      c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+    });
+    stars = Array.from({length:Math.min(150,Math.floor(width*height/8500))},()=>({
+      x:Math.random()*width,y:Math.random()*height,r:Math.random()*1.3+.2,
+      a:Math.random()*.55+.15,s:Math.random()*.015+.003
+    }));
+  };
+  function launch(x,y) {
+    const sx = x ?? width*(.12+Math.random()*.76);
+    const sy = height+10;
+    const tx = x ?? width*(.12+Math.random()*.76);
+    const ty = y ?? height*(.12+Math.random()*.48);
+    rockets.push({x:sx,y:sy,tx,ty,v:Math.max(5,Math.min(10,height/90)),color:colors[Math.floor(Math.random()*colors.length)]});
+  }
+  function burst(x,y,color) {
+    const count = 65+Math.floor(Math.random()*50);
+    for(let i=0;i<count;i++){
+      const angle=Math.random()*Math.PI*2, speed=Math.random()*4.8+.7;
+      particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,decay:Math.random()*.012+.007,
+        r:Math.random()*2.5+.7,color:Math.random()<.22?colors[Math.floor(Math.random()*colors.length)]:color,gravity:.045+Math.random()*.035});
+    }
+  }
+  function sprinkleConfetti() {
+    for(let i=0;i<170;i++) confetti.push({
+      x:Math.random()*width,y:-Math.random()*height*.9,w:Math.random()*7+3,h:Math.random()*12+5,
+      vx:(Math.random()-.5)*2,vy:Math.random()*2+1.5,rot:Math.random()*6.28,vr:(Math.random()-.5)*.14,
+      color:colors[Math.floor(Math.random()*colors.length)],life:Math.random()*300+180
+    });
+  }
+  function draw() {
+    requestAnimationFrame(draw);
+    fireCtx.clearRect(0,0,width,height);
+    starCtx.clearRect(0,0,width,height);
+    stars.forEach(s=>{s.a+=s.s*(Math.random()<.5?-1:1);s.a=Math.max(.12,Math.min(.75,s.a));starCtx.globalAlpha=s.a;starCtx.fillStyle='#dceaff';starCtx.beginPath();starCtx.arc(s.x,s.y,s.r,0,Math.PI*2);starCtx.fill()});
+    starCtx.globalAlpha=1;
+    rockets.forEach((r,i)=>{
+      const dx=r.tx-r.x,dy=r.ty-r.y,dist=Math.hypot(dx,dy);
+      if(dist<r.v+5){burst(r.tx,r.ty,r.color);rockets.splice(i,1);return}
+      r.x+=dx/dist*r.v;r.y+=dy/dist*r.v;
+      fireCtx.strokeStyle=r.color;fireCtx.lineWidth=2;fireCtx.beginPath();fireCtx.moveTo(r.x,r.y+13);fireCtx.lineTo(r.x,r.y);fireCtx.stroke();
+    });
+    particles.forEach((p,i)=>{
+      p.x+=p.vx;p.y+=p.vy;p.vy+=p.gravity;p.vx*=.986;p.vy*=.986;p.life-=p.decay;
+      if(p.life<=0){particles.splice(i,1);return}
+      fireCtx.globalAlpha=Math.max(0,p.life);fireCtx.fillStyle=p.color;fireCtx.beginPath();fireCtx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);fireCtx.fill();
+    });
+    fireCtx.globalAlpha=1;
+    confettiCtx.clearRect(0,0,width,height);
+    confetti.forEach((p,i)=>{
+      p.x+=p.vx+Math.sin(p.y*.015)*.5;p.y+=p.vy;p.rot+=p.vr;p.life--;
+      if(p.y>height+30||p.life<=0){confetti.splice(i,1);return}
+      confettiCtx.save();confettiCtx.translate(p.x,p.y);confettiCtx.rotate(p.rot);confettiCtx.fillStyle=p.color;confettiCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h);confettiCtx.restore();
+    });
+    if(started && performance.now()-lastLaunch>750 && Math.random()<.075){launch();lastLaunch=performance.now()}
+  }
+  function celebrate() {
+    if(!started){
+      started=true;intro.classList.add('gone');scene.classList.add('show');
+      sprinkleConfetti();
+      setTimeout(()=>launch(width*.28,height*.28),150);
+      setTimeout(()=>launch(width*.72,height*.22),450);
+      setTimeout(()=>launch(width*.5,height*.15),800);
+      setTimeout(()=>launch(width*.16,height*.42),1200);
+      setTimeout(()=>launch(width*.84,height*.4),1550);
+      lastLaunch=performance.now();
+      try { if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(()=>{}); } catch(e) {}
+    } else {
+      for(let i=0;i<5;i++) setTimeout(()=>launch(),i*180);
+      sprinkleConfetti();
+    }
+  }
+  document.addEventListener('click', e => {
+    if(e.target.closest('#replay')) { e.stopPropagation(); celebrate(); return; }
+    if(!started) celebrate();
+    else if(Math.random()<.7) launch(e.clientX,e.clientY);
+  });
+  document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!started){e.preventDefault();celebrate()}});
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+</script>
+</body>
+</html>
